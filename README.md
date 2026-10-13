@@ -4,21 +4,21 @@ Throughout this journey, I explored embedded programming, worked with different 
 The main goal of this repository is to build a strong foundation in embedded system development by combining theoretical knowledge with practical implementation.
 
 **📌 Table of Contents**
-About the Repository
-Learning Objectives
-Technologies and Tools
-Embedded Systems Fundamentals
-FreeRTOS Concepts
-Sensors and Components
-Projects Completed
-Wokwi Simulation
-Adafruit IO Dashboard
-System Workflow
-Skills Developed
-Repository Structure
-Getting Started
-Future Improvements
-Conclusion
+•	About the Repository
+•	Learning Objectives
+•	Technologies and Tools
+•	Embedded Systems Fundamentals
+•	FreeRTOS Concepts
+•	Sensors and Components
+•	Projects Completed
+•	Wokwi Simulation
+•	Adafruit IO Dashboard
+•	System Workflow
+•	Skills Developed
+•	Repository Structure
+•	Getting Started
+•	Future Improvements
+•	Conclusion
 
 **📖 About the Repository**
 This repository contains my practical work and projects related to embedded systems and the Internet of Things (IoT).
@@ -183,6 +183,7 @@ Reading and processing sensor data.
 Environmental monitoring.
 Display integration.
 Cloud-based data visualization.
+
 **Project 3: LED Control**
 Objective: To control an LED through a microcontroller program.
 
