@@ -1,0 +1,69 @@
+# ESP32 Soil Moisture Monitoring System Using FreeRTOS
+This project is designed to learn "Embedded Systems and FreeRTOS" using an ESP32 and a soil moisture sensor. The system periodically reads soil sensor values, displays the readings on the Serial Monitor, and activates a buzzer when the soil condition crosses a predefined threshold.
+The project uses FreeRTOS multitasking to separate the system into three independent tasks: "Sensor Task", "Display Task", and "Alert Task". Queues are used for communication between tasks, while task priorities and delays demonstrate real-time scheduling and efficient CPU utilization. Hysteresis-based threshold control helps prevent frequent buzzer switching near the alarm limits.
+This project provides practical experience with sensor interfacing, GPIO control, task creation, task priorities, inter-task communication, queues, and real-time operating system concepts using ESP32 and Arduino.
+# code:
+#include <Arduino.h>
+#define SOIL_PIN 34
+#define BUZZER_PIN 26
+
+struct SensorData {
+    int soilValue;
+    int dryThreshold;
+};
+QueueHandle_t displayQueue;
+QueueHandle_t alertQueue;
+void sensorTask(void *p) {
+  SensorData d;
+    while (true) {
+        d.soilValue = analogRead(SOIL_PIN);
+        d.dryThreshold = 2700;
+        if (!isnan(d.soilValue) &&
+            !isnan(d.dryThreshold)) {
+            xQueueOverwrite(displayQueue, &d);
+            xQueueOverwrite(alertQueue, &d);
+        }
+        vTaskDelay(pdMS_TO_TICKS(2000));
+    }
+}
+void displayTask(void *p) {
+    SensorData d;
+    while (true) {
+        if (xQueueReceive(displayQueue,  &d, portMAX_DELAY) == pdTRUE) {
+            Serial.print("Soil Value: ");
+            Serial.println(d.soilValue);
+        }
+    }
+}
+
+void alertTask(void *p) {
+    SensorData d;
+    bool alarm = false;
+
+    while (true) {
+        if (xQueueReceive( alertQueue, &d,portMAX_DELAY) == pdTRUE) {
+   if (d.soilValue >4000)
+      alarm = true;
+     if (d.soilValue < 3000)
+     alarm = false;
+       digitalWrite( BUZZER_PIN,  alarm ? HIGH : LOW);
+   }
+ }
+}
+
+void setup() {
+    Serial.begin(115200);
+    pinMode(BUZZER_PIN, OUTPUT);
+    digitalWrite(BUZZER_PIN, LOW);
+    displayQueue = xQueueCreate(1, sizeof(SensorData));
+    alertQueue = xQueueCreate(1, sizeof(SensorData));
+    xTaskCreate(
+        sensorTask, "Sensor",4096, NULL, 3, NULL);
+    xTaskCreate(
+      displayTask, "Display",3072, NULL, 1, NULL);
+    xTaskCreate(
+   alertTask, "Alert",3072, NULL, 2, NULL);
+}
+void loop() {
+    vTaskDelay(pdMS_TO_TICKS(1000));
+}
